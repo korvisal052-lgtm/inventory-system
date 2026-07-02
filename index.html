@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบคลังสต็อกสินค้า</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .input-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-clear {
+            background: #e74c3c;
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-clear:hover {
+            background: #c0392b;
+        }
+
+        .table-section {
+            margin-top: 30px;
+        }
+
+        .table-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        thead {
+            background: #f8f9fa;
+            border-bottom: 2px solid #667eea;
+        }
+
+        th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f0f0f0;
+        }
+
+        .btn-edit {
+            background: #3498db;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 5px;
+            margin-right: 5px;
+            font-size: 0.85em;
+        }
+
+        .btn-edit:hover {
+            background: #2980b9;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 0.85em;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state p {
+            font-size: 1.1em;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .number {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn-add, .btn-clear {
+                flex: auto;
+                width: 100%;
+            }
+
+            table {
+                font-size: 0.9em;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏪 ระบบคลังสต็อกสินค้า</h1>
+            <p>Inventory Management System</p>
+        </div>
+
+        <div class="content">
+            <!-- Statistics -->
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>จำนวนรายการ</h3>
+                    <div class="number" id="totalItems">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>รวมสต็อก</h3>
+                    <div class="number" id="totalQuantity">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>มูลค่า</h3>
+                    <div class="number" id="totalValue">0 ฿</div>
+                </div>
+            </div>
+
+            <!-- Input Form -->
+            <div class="input-section">
+                <form id="addForm">
+                    <div class="form-group">
+                        <label for="productName">ชื่อสินค้า</label>
+                        <input type="text" id="productName" placeholder="เช่น นม, ไข่, ข้าว" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productQuantity">จำนวน</label>
+                        <input type="number" id="productQuantity" placeholder="เช่น 50" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productPrice">ราคา/หน่วย (บาท)</label>
+                        <input type="number" id="productPrice" placeholder="เช่น 100" min="0" step="0.01" required>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn-add">➕ เพิ่มสินค้า</button>
+                        <button type="button" class="btn-clear" onclick="clearAllData()">🗑️ ลบทั้งหมด</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Table -->
+            <div class="table-section">
+                <h2>📦 รายการสินค้า</h2>
+                <div class="table-wrapper">
+                    <table id="inventoryTable">
+                        <thead>
+                            <tr>
+                                <th>ลำดับ</th>
+                                <th>ชื่อสินค้า</th>
+                                <th>จำนวน</th>
+                                <th>ราคา/หน่วย</th>
+                                <th>รวม</th>
+                                <th>จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <tr>
+                                <td colspan="6" class="empty-state">
+                                    <p>ยังไม่มีสินค้า กรุณาเพิ่มสินค้าใหม่</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let inventory = [];
+
+        // Load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('inventory');
+            if (saved) {
+                inventory = JSON.parse(saved);
+                renderTable();
+            }
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+        }
+
+        // Add product
+        document.getElementById('addForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('productName').value;
+            const quantity = parseInt(document.getElementById('productQuantity').value);
+            const price = parseFloat(document.getElementById('productPrice').value);
+
+            if (name && quantity > 0 && price > 0) {
+                inventory.push({
+                    id: Date.now(),
+                    name: name,
+                    quantity: quantity,
+                    price: price
+                });
+
+                saveData();
+                renderTable();
+                this.reset();
+                document.getElementById('productName').focus();
+            }
+        });
+
+        // Render table
+        function renderTable() {
+            const tableBody = document.getElementById('tableBody');
+            
+            if (inventory.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" class="empty-state"><p>ยังไม่มีสินค้า กรุณาเพิ่มสินค้าใหม่</p></td></tr>';
+                updateStats();
+                return;
+            }
+
+            let html = '';
+            inventory.forEach((item, index) => {
+                const total = (item.quantity * item.price).toFixed(2);
+                html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.name}</td>
+                        <td>${item.quantity}</td>
+                        <td>฿${item.price.toFixed(2)}</td>
+                        <td>฿${total}</td>
+                        <td>
+                            <button class="btn-edit" onclick="editProduct(${item.id})">✏️ แก้ไข</button>
+                            <button class="btn-delete" onclick="deleteProduct(${item.id})">🗑️ ลบ</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tableBody.innerHTML = html;
+            updateStats();
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('totalItems').textContent = inventory.length;
+            
+            const totalQty = inventory.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('totalQuantity').textContent = totalQty;
+            
+            const totalVal = inventory.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+            document.getElementById('totalValue').textContent = '฿' + totalVal.toFixed(2);
+        }
+
+        // Edit product
+        function editProduct(id) {
+            const product = inventory.find(p => p.id === id);
+            if (product) {
+                document.getElementById('productName').value = product.name;
+                document.getElementById('productQuantity').value = product.quantity;
+                document.getElementById('productPrice').value = product.price;
+                deleteProduct(id);
+                document.getElementById('productName').focus();
+            }
+        }
+
+        // Delete product
+        function deleteProduct(id) {
+            inventory = inventory.filter(p => p.id !== id);
+            saveData();
+            renderTable();
+        }
+
+        // Clear all data
+        function clearAllData() {
+            if (confirm('คุณแน่ใจที่ต้องการลบข้อมูลทั้งหมดหรือไม่?')) {
+                inventory = [];
+                saveData();
+                renderTable();
+            }
+        }
+
+        // Load data on page load
+        loadData();
+    </script>
+</body>
+</html>
